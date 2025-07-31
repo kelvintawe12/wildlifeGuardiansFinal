@@ -40,7 +40,9 @@ const AdminAnimalCreate = () => {
       if (isEditMode && id) {
         await updateAnimal(id, animalData);
       } else {
+        console.log('Submitting new animal:', animalData);
         await createAnimal(animalData);
+        console.log('Animal creation successful');
       }
       navigate('/admin/animals');
     } catch (err) {

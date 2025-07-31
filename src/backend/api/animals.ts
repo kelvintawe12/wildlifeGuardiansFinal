@@ -38,15 +38,18 @@ export async function getAnimalById(id: string): Promise<Animal | null> {
   return data;
 }
 export async function createAnimal(animal: AnimalInput): Promise<Animal> {
-  const {
-    data,
-    error
-  } = await supabase.from('animals').insert([animal]).select();
-  if (error) {
-    console.error('Error creating animal:', error);
-    throw error;
+  try {
+    const { data, error } = await supabase.from('animals').insert([animal]).select();
+    if (error) {
+      console.error('Error creating animal:', error);
+      throw error;
+    }
+    console.log('Animal created successfully:', data);
+    return data![0];
+  } catch (err) {
+    console.error('Exception in createAnimal:', err);
+    throw err;
   }
-  return data![0];
 }
 export async function updateAnimal(id: string, animal: Partial<AnimalInput>): Promise<Animal> {
   const {
