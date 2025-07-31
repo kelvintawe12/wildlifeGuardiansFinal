@@ -105,7 +105,7 @@ const Sidebar = ({
           </div>
           {/* User profile section */}
           <div className="mb-5 flex flex-col items-center">
-            <img src={userDetails.avatar} alt="Profile" className="rounded-full w-14 h-14 border-2 border-green-200 object-cover shadow" />
+            <img src="/wildlife-guardians-logo.svg" alt="Profile" className="rounded-full w-14 h-14 border-2 border-green-200 object-cover shadow" />
             <h2 className="mt-2 text-sm font-bold text-gray-800 text-center">
               {userDetails.name ? `Welcome, ${userDetails.name}!` : 'Welcome, Explorer!'}
             </h2>
