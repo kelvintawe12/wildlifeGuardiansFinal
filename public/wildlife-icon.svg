@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="256" fill="#059669"/>
+  
+  <!-- Tree/Leaf Design -->
+  <path d="M256 120C320 120 360 160 360 220C360 260 340 290 310 310C330 330 340 360 340 390C340 430 320 460 280 480C270 485 260 488 256 488C252 488 242 485 232 480C192 460 170 430 170 390C170 360 180 330 200 310C170 290 150 260 150 220C150 160 190 120 256 120Z" fill="#22C55E"/>
+  
+  <!-- Animal Silhouette (Bear) -->
+  <ellipse cx="256" cy="200" rx="40" ry="35" fill="#374151"/>
+  <circle cx="240" cy="185" r="8" fill="#374151"/>
+  <circle cx="272" cy="185" r="8" fill="#374151"/>
+  <ellipse cx="256" cy="280" rx="60" ry="50" fill="#374151"/>
+  <ellipse cx="220" cy="320" rx="15" ry="25" fill="#374151"/>
+  <ellipse cx="292" cy="320" rx="15" ry="25" fill="#374151"/>
+  <ellipse cx="240" cy="350" rx="12" ry="20" fill="#374151"/>
+  <ellipse cx="272" cy="350" rx="12" ry="20" fill="#374151"/>
+  
+  <!-- Eyes -->
+  <circle cx="240" cy="185" r="4" fill="#FFFFFF"/>
+  <circle cx="272" cy="185" r="4" fill="#FFFFFF"/>
+  
+  <!-- Shield Effect -->
+  <path d="M256 80L300 100L320 140L310 180L280 200L256 190L232 200L202 180L192 140L212 100L256 80Z" fill="rgba(255,255,255,0.2)" stroke="#FFFFFF" stroke-width="2"/>
+</svg>

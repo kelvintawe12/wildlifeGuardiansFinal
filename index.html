@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    
+    <!-- Favicon and Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon-logo.svg" />
+    <link rel="apple-touch-icon" href="/wildlife-guardians-compact.svg" />
+    <link rel="mask-icon" href="/wildlife-guardians-compact.svg" color="#059669" />
+    
+    <!-- Mobile and PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Wildlife Guardians" />
+    <meta name="application-name" content="Wildlife Guardians" />
+    <meta name="msapplication-TileColor" content="#059669" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- Theme Colors -->
+    <meta name="theme-color" content="#059669" />
+    <meta name="msapplication-navbutton-color" content="#059669" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#059669" />
+    
+    <!-- SEO and Social Media -->
+    <meta name="description" content="Learn about wildlife conservation and protect endangered species through interactive quizzes and educational content." />
+    <meta name="keywords" content="wildlife, conservation, animals, environment, education, quiz" />
+    <meta name="author" content="Wildlife Guardians Team" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Wildlife Guardians" />
+    <meta property="og:description" content="Protect and learn about wildlife conservation" />
+    <meta property="og:image" content="/wildlife-guardians-logo.svg" />
+    <meta property="og:url" content="https://wildlife-guardiansrwanda.vercel.app" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Wildlife Guardians" />
+    <meta name="twitter:description" content="Protect and learn about wildlife conservation" />
+    <meta name="twitter:image" content="/wildlife-guardians-logo.svg" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <title>Wildlife Guardians - Protect & Learn</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+              console.log('ServiceWorker registration successful');
+            })
+            .catch(function(err) {
+              console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+      }
+    </script>
+  </body>
+</html>

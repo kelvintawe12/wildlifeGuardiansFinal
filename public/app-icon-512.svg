@@ -1,0 +1,90 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="appIconBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#065f46;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#047857;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.1" />
+    </linearGradient>
+    <linearGradient id="leafIconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#16a34a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#15803d;stop-opacity:1" />
+    </linearGradient>
+    <filter id="appShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="4" dy="8" stdDeviation="6" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="innerGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- App Icon Background -->
+  <rect width="512" height="512" rx="90" ry="90" fill="url(#appIconBg)" filter="url(#appShadow)"/>
+  
+  <!-- Subtle Pattern Overlay -->
+  <rect width="512" height="512" rx="90" ry="90" fill="url(#shieldGrad)"/>
+  
+  <!-- Main Shield Shape -->
+  <path d="M256 80 L340 120 L370 200 L355 280 L320 350 L256 340 L192 350 L157 280 L142 200 L172 120 L256 80 Z" 
+        fill="url(#shieldGrad)" stroke="rgba(255,255,255,0.4)" stroke-width="3"/>
+  
+  <!-- Large Decorative Leaf -->
+  <path d="M256 100 C320 100 360 130 360 180 C360 210 350 235 330 260 C350 285 360 315 360 345 C360 375 320 400 256 400 C192 400 152 375 152 345 C152 315 162 285 182 260 C162 235 152 210 152 180 C152 130 192 100 256 100 Z" 
+        fill="url(#leafIconGrad)" filter="url(#innerGlow)"/>
+  
+  <!-- Gorilla Silhouette -->
+  <g transform="translate(206, 160)">
+    <!-- Head -->
+    <ellipse cx="50" cy="40" rx="35" ry="30" fill="#1f2937"/>
+    <!-- Body -->
+    <ellipse cx="50" cy="85" rx="42" ry="35" fill="#1f2937"/>
+    <!-- Arms -->
+    <ellipse cx="20" cy="95" rx="18" ry="35" fill="#1f2937"/>
+    <ellipse cx="80" cy="95" rx="18" ry="35" fill="#1f2937"/>
+    <!-- Legs -->
+    <ellipse cx="35" cy="140" rx="12" ry="25" fill="#1f2937"/>
+    <ellipse cx="65" cy="140" rx="12" ry="25" fill="#1f2937"/>
+    <!-- Eyes -->
+    <circle cx="42" cy="35" r="4" fill="#ffffff"/>
+    <circle cx="58" cy="35" r="4" fill="#ffffff"/>
+    <circle cx="42" cy="35" r="2.5" fill="#000000"/>
+    <circle cx="58" cy="35" r="2.5" fill="#000000"/>
+    <!-- Chest detail -->
+    <ellipse cx="50" cy="85" rx="25" ry="20" fill="#374151" opacity="0.7"/>
+  </g>
+  
+  <!-- Flying Birds -->
+  <g transform="translate(320, 140)" opacity="0.9">
+    <path d="M0 0 L8 -6 L16 0 L8 4 Z" fill="#ffffff" filter="url(#innerGlow)"/>
+    <path d="M24 10 L32 4 L40 10 L32 14 Z" fill="#ffffff" filter="url(#innerGlow)"/>
+    <path d="M50 -5 L58 -11 L66 -5 L58 -1 Z" fill="#ffffff" filter="url(#innerGlow)"/>
+  </g>
+  
+  <!-- Mountain Range at Bottom -->
+  <path d="M80 350 L120 300 L160 330 L200 280 L240 310 L280 270 L320 300 L360 280 L400 320 L430 300 L430 420 L80 420 Z" 
+        fill="rgba(0,0,0,0.3)" opacity="0.6"/>
+  
+  <!-- Small Decorative Elements -->
+  <g opacity="0.8">
+    <circle cx="180" cy="120" r="3" fill="#86efac"/>
+    <circle cx="195" cy="135" r="2" fill="#bbf7d0"/>
+    <circle cx="170" cy="140" r="2.5" fill="#dcfce7"/>
+    
+    <circle cx="330" cy="320" r="3" fill="#86efac"/>
+    <circle cx="345" cy="305" r="2" fill="#bbf7d0"/>
+    <circle cx="320" cy="335" r="2.5" fill="#dcfce7"/>
+  </g>
+  
+  <!-- Subtle Inner Border -->
+  <rect x="10" y="10" width="492" height="492" rx="85" ry="85" 
+        fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+</svg>
