@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import Status from './Status';
 import { PWAInstall } from '../pages/pwainstall';
 
 interface LayoutProps {
@@ -19,6 +20,7 @@ const Layout = ({
   };
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
       <Header toggleSidebar={toggleSidebar} onLogout={onLogout} />
+      <Status />
       <div className="flex">
         <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
         <main className="flex-1 p-4 md:p-6 pt-20 md:ml-64">
