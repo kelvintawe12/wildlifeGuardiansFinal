@@ -5,9 +5,18 @@ interface AdminSidebarProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }
+interface AdminSidebarProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  userName?: string;
+  userEmail?: string;
+}
+
 const AdminSidebar = ({
   isOpen,
-  setIsOpen
+  setIsOpen,
+  userName = 'Admin User',
+  userEmail = 'admin@example.com'
 }: AdminSidebarProps) => {
   const location = useLocation();
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -55,83 +64,118 @@ const AdminSidebar = ({
     return false;
   };
   // Group navigation items
-  const navGroups = [{
-    title: 'Dashboard',
-    items: [{
-      name: 'Dashboard',
-      path: '/admin/dashboard',
-      icon: <LayoutDashboardIcon size={20} />
-    }]
-  }, {
-    title: 'Content Management',
-    items: [{
-      name: 'Animals',
-      path: '/admin/animals',
-      icon: <LeafIcon size={20} />,
-      subItems: [{
-        name: 'All Animals',
-        path: '/admin/animals',
-        icon: <ListIcon size={16} />
-      }, {
-        name: 'Add Animal',
-        path: '/admin/animals/create',
-        icon: <PlusCircleIcon size={16} />
-      }]
-    }, {
-      name: 'Quizzes',
-      path: '/admin/quizzes',
-      icon: <FileQuestionIcon size={20} />,
-      subItems: [{
-        name: 'All Quizzes',
-        path: '/admin/quizzes',
-        icon: <ListIcon size={16} />
-      }, {
-        name: 'Create Quiz',
-        path: '/admin/quizzes/create',
-        icon: <BookPlusIcon size={16} />
-      }]
-    }, {
-      name: 'Badges',
-      path: '/admin/badges',
-      icon: <AwardIcon size={20} />,
-      subItems: [{
-        name: 'All Badges',
-        path: '/admin/badges',
-        icon: <ListIcon size={16} />
-      }, {
-        name: 'Create Badge',
-        path: '/admin/badges/create',
-        icon: <PlusCircleIcon size={16} />
-      }]
-    }]
-  }, {
-    title: 'User Management',
-    items: [{
-      name: 'Users',
-      path: '/admin/users',
-      icon: <UsersIcon size={20} />,
-      subItems: [{
-        name: 'All Users',
-        path: '/admin/users',
-        icon: <ListIcon size={16} />
-      }, {
-        name: 'Add User',
-        path: '/admin/users/create',
-        icon: <UserPlusIcon size={16} />
-      }]
-    }]
-  }, {
-    title: 'Settings',
-    items: [{
-      name: 'Settings',
-      path: '/admin/settings',
-      icon: <SettingsIcon size={20} />
-    }, {
-      name: 'Help & Support',
-      path: '/admin/help',
-      icon: <HelpCircleIcon size={20} />
-    }]
-  }];
+  interface NavItem {
+    name: string;
+    path: string;
+    icon: JSX.Element;
+    subItems?: NavItem[];
+  }
+
+  const navGroups: { title: string; items: NavItem[] }[] = [
+    {
+      title: 'Dashboard',
+      items: [
+        {
+          name: 'Dashboard',
+          path: '/admin/dashboard',
+          icon: <LayoutDashboardIcon size={20} />,
+        },
+      ],
+    },
+    {
+      title: 'Content Management',
+      items: [
+        {
+          name: 'Animals',
+          path: '/admin/animals',
+          icon: <LeafIcon size={20} />,
+          subItems: [
+            {
+              name: 'All Animals',
+              path: '/admin/animals',
+              icon: <ListIcon size={16} />,
+            },
+            {
+              name: 'Add Animal',
+              path: '/admin/animals/create',
+              icon: <PlusCircleIcon size={16} />,
+            },
+          ],
+        },
+        {
+          name: 'Quizzes',
+          path: '/admin/quizzes',
+          icon: <FileQuestionIcon size={20} />,
+          subItems: [
+            {
+              name: 'All Quizzes',
+              path: '/admin/quizzes',
+              icon: <ListIcon size={16} />,
+            },
+            {
+              name: 'Create Quiz',
+              path: '/admin/quizzes/create',
+              icon: <BookPlusIcon size={16} />,
+            },
+          ],
+        },
+        {
+          name: 'Badges',
+          path: '/admin/badges',
+          icon: <AwardIcon size={20} />,
+          subItems: [
+            {
+              name: 'All Badges',
+              path: '/admin/badges',
+              icon: <ListIcon size={16} />,
+            },
+            {
+              name: 'Create Badge',
+              path: '/admin/badges/create',
+              icon: <PlusCircleIcon size={16} />,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      title: 'User Management',
+      items: [
+        {
+          name: 'Users',
+          path: '/admin/users',
+          icon: <UsersIcon size={20} />,
+          subItems: [
+            {
+              name: 'All Users',
+              path: '/admin/users',
+              icon: <ListIcon size={16} />,
+            },
+            {
+              name: 'Add User',
+              path: '/admin/users/create',
+              icon: <UserPlusIcon size={16} />,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      title: 'Settings',
+      items: [
+        {
+          name: 'Settings',
+          path: '/admin/settings',
+          icon: <SettingsIcon size={20} />,
+        },
+        {
+          name: 'Help & Support',
+          path: '/admin/help',
+          icon: <HelpCircleIcon size={20} />,
+        },
+      ],
+    },
+  ];
   return <>
       {/* Mobile overlay */}
       {isOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300 ease-in-out" onClick={() => setIsOpen(false)} aria-hidden="true" />}
@@ -153,9 +197,9 @@ const AdminSidebar = ({
                 </div>
                 <div className="ml-3">
                   <div className="text-sm font-medium text-gray-800">
-                    Admin User
+                    {userName}
                   </div>
-                  <div className="text-xs text-gray-500">admin@example.com</div>
+                  <div className="text-xs text-gray-500">{userEmail}</div>
                 </div>
               </div>
             </div>

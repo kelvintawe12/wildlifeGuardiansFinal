@@ -10,7 +10,7 @@ export type User = {
   created_at: string;
   updated_at: string;
 };
-export type UserInput = Omit<User, 'id' | 'created_at' | 'updated_at' | 'join_date'>;
+export type UserInput = Omit<User, 'id' | 'created_at' | 'updated_at' | 'join_date'> & { password: string };
 export async function getAllUsers(): Promise<User[]> {
   const {
     data,
@@ -35,21 +35,50 @@ export async function getUserById(id: string): Promise<User | null> {
 }
 export async function createUser(user: UserInput): Promise<User> {
   try {
-    // For development purposes, we'll use localStorage instead of Supabase
-    // This bypasses the RLS policy issue
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const newUser = {
-      ...user,
-      id: Date.now().toString(),
-      join_date: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-    return newUser;
+    const now = new Date().toISOString();
+    console.log('[createUser] Creating user with:', { ...user, join_date: now, created_at: now, updated_at: now });
+    const { data, error } = await supabase.from('users').insert([
+      {
+        ...user,
+        join_date: now,
+        created_at: now,
+        updated_at: now
+      }
+    ]).select();
+    if (error) {
+      console.error('[createUser] Error creating user:', error);
+      throw error;
+    }
+    console.log('[createUser] User created:', data?.[0]);
+    return data![0];
   } catch (err) {
-    console.error('Error creating user:', err);
+    console.error('[createUser] Exception:', err);
+    throw err;
+  }
+}
+
+// Login function: check user by email and password (plaintext for demo; use hashing in production)
+export async function loginUser(email: string, password: string): Promise<User | null> {
+  try {
+    console.log('[loginUser] Attempting login for:', email);
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .eq('password', password)
+      .maybeSingle();
+    if (error) {
+      console.error('[loginUser] Error logging in:', error);
+      throw error;
+    }
+    if (data) {
+      console.log('[loginUser] Login successful for:', email);
+    } else {
+      console.log('[loginUser] Login failed for:', email);
+    }
+    return data || null;
+  } catch (err) {
+    console.error('[loginUser] Exception:', err);
     throw err;
   }
 }

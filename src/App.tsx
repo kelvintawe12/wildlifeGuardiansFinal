@@ -26,6 +26,7 @@ import Profile from './pages/Profile';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminHelp from './pages/admin/AdminHelp';
 import Authors from './pages/Authors';
+import AdminActivity from './pages/admin/AdminActivity';
 export function App() {
   // Since we're implementing basic authentication, we'll use local storage
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -116,6 +117,7 @@ export function App() {
           {/* Settings & Help */}
           <Route path="settings" element={<AdminSettings />} />
           <Route path="help" element={<AdminHelp />} />
+          <Route path="activity" element={<AdminActivity />} />
           <Route path="authors" element={<Authors />} />
         </Route>
         {/* Fallback */}

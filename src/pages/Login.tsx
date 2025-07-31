@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { EyeIcon, EyeOffIcon, UserIcon, AlertCircleIcon } from 'lucide-react';
+import { loginUser } from '../backend/api/users';
 const Login = ({
   onLogin
 }: {
@@ -17,25 +18,17 @@ const Login = ({
     setError('');
     try {
       setIsSubmitting(true);
-      // In a real app, this would be an API call to authenticate the user
-      // For now, simulate authentication with a delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      // Check if the user exists in the "database" (localStorage)
-      // In a real app, this would be a server-side check
-      const storedEmail = localStorage.getItem('userEmail');
-      const storedRole = localStorage.getItem('userRole');
-      const storedUserId = localStorage.getItem('userId');
-      if (storedEmail === email && storedRole === 'student') {
-        // Set session
-        localStorage.setItem('currentUser', JSON.stringify({
-          email,
-          role: 'student',
-          id: storedUserId,
-          name: 'Student User' // In a real app, this would come from the database
-        }));
-        // Call the login handler from App.tsx
+      // Authenticate against Supabase users table
+      const user = await loginUser(email, password);
+      if (user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
         onLogin();
-        navigate('/dashboard');
+        // Redirect based on role
+        if (user.role === 'admin') {
+          navigate('/admin/dashboard');
+        } else {
+          navigate('/dashboard');
+        }
       } else {
         setError('Invalid email or password');
       }

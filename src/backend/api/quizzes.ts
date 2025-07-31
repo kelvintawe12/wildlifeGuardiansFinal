@@ -162,33 +162,30 @@ export async function getQuizStats(): Promise<{
   avgScore: number;
 }> {
   // Get total quizzes
-  const {
-    count: totalQuizzes,
-    error: countError
-  } = await supabase.from('quizzes').select('*', {
-    count: 'exact',
-    head: true
-  });
+  const { count: totalQuizzes, error: countError } = await supabase
+    .from('quizzes')
+    .select('*', { count: 'exact', head: true });
   if (countError) {
     console.error('Error counting quizzes:', countError);
     throw countError;
   }
-  // Get quiz completions and average score
-  const {
-    data: statsData,
-    error: statsError
-  } = await supabase.from('quiz_results').select('count(*), avg(score)');
-  if (statsError) {
-    console.error('Error getting quiz stats:', statsError);
-    throw statsError;
+
+  // Get all quiz results to calculate completions and average score
+  const { data: quizResults, error: resultsError } = await supabase
+    .from('quiz_results')
+    .select('score');
+  if (resultsError) {
+    console.error('Error getting quiz results:', resultsError);
+    throw resultsError;
   }
-  const stats = statsData?.[0] || {
-    count: 0,
-    avg: 0
-  };
+  const completions = quizResults ? quizResults.length : 0;
+  const avgScore = quizResults && quizResults.length > 0
+    ? Math.round(quizResults.reduce((sum: number, r: any) => sum + (parseFloat(r.score) || 0), 0) / quizResults.length)
+    : 0;
+
   return {
     total: totalQuizzes || 0,
-    completions: parseInt(stats.count) || 0,
-    avgScore: Math.round(parseFloat(stats.avg) || 0)
+    completions,
+    avgScore
   };
 }
