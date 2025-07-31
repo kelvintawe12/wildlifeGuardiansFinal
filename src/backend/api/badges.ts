@@ -67,17 +67,25 @@ export async function deleteBadge(id: string): Promise<void> {
   }
 }
 export async function getBadgeAwardCount(): Promise<Record<string, number>> {
-  const {
-    data,
-    error
-  } = await supabase.from('user_badges').select('badge_id, count').select('badge_id, count(*)').group('badge_id');
+  const { data, error } = await supabase
+    .from('user_badges')
+    .select('badge_id');
+
   if (error) {
     console.error('Error fetching badge award counts:', error);
     throw error;
   }
+
   const result: Record<string, number> = {};
-  data?.forEach(item => {
-    result[item.badge_id] = parseInt(item.count);
-  });
+  if (Array.isArray(data)) {
+    data.forEach((item: any) => {
+      if (item.badge_id) {
+        if (!result[item.badge_id]) {
+          result[item.badge_id] = 0;
+        }
+        result[item.badge_id]++;
+      }
+    });
+  }
   return result;
 }
