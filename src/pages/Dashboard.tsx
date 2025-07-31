@@ -33,7 +33,7 @@ const Dashboard = () => {
   const [allQuizzes, setAllQuizzes] = useState<any[]>([]);
   const [quizResults, setQuizResults] = useState<any[]>([]);
   const [allAnimals, setAllAnimals] = useState<Animal[]>([]);
-  const [badges, setBadges] = useState<any[]>([]);
+  // Removed unused badges state
   const [earnedBadges, setEarnedBadges] = useState<any[]>([]);
 
   useEffect(() => {
@@ -52,9 +52,8 @@ const Dashboard = () => {
           // Fetch all animals
           const animals = await getAllAnimals();
           setAllAnimals(animals);
-          // Fetch all badges
-          const allBadges = await getAllBadges();
-          setBadges(allBadges);
+          // Fetch all badges (not used directly)
+          await getAllBadges();
           // Fetch earned badges
           const earned = await getUserBadges(userId);
           setEarnedBadges(earned);
@@ -208,27 +207,52 @@ const Dashboard = () => {
       <div>
         <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center"><LeafIcon className="mr-2" />All Animals</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {allAnimals.map((animal) => (
-            <Link
-              key={animal.id}
-              to={`/animals?id=${animal.id}`}
-              className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-            >
-              <img src={animal.image_url} alt={animal.name} className="w-full h-40 object-cover" />
-              <div className="p-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-gray-800">{animal.name}</h3>
-                  <span className="inline-block text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
-                    {animal.status.charAt(0).toUpperCase() + animal.status.slice(1).replace('_', ' ')}
-                  </span>
-                </div>
-                <div className="mt-2 flex items-center text-sm text-gray-500">
-                  <LeafIcon size={14} className="mr-1" />
-                  <span>Click to learn more</span>
+          {allAnimals.map((animal) => {
+            // Find quizzes for this animal
+            const animalQuizzes = allQuizzes.filter((quiz) => quiz.animal_id === animal.id);
+            return (
+              <div
+                key={animal.id}
+                className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col"
+              >
+                <Link
+                  to={`/animals?id=${animal.id}`}
+                  className="block"
+                >
+                  <img src={animal.image_url} alt={animal.name} className="w-full h-40 object-cover" />
+                  <div className="p-4 pb-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-gray-800">{animal.name}</h3>
+                      <span className="inline-block text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
+                        {animal.status.charAt(0).toUpperCase() + animal.status.slice(1).replace('_', ' ')}
+                      </span>
+                    </div>
+                    <div className="mt-2 flex items-center text-sm text-gray-500">
+                      <LeafIcon size={14} className="mr-1" />
+                      <span>Click to learn more</span>
+                    </div>
+                  </div>
+                </Link>
+                <div className="px-4 pb-4 pt-1">
+                  {animalQuizzes.length === 0 ? (
+                    <span className="inline-block text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full mb-2">Untracked Quizzes</span>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {animalQuizzes.map((quiz) => (
+                        <Link
+                          key={quiz.id}
+                          to={`/quiz?id=${quiz.id}`}
+                          className="inline-block bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-xs font-medium"
+                        >
+                          {quiz.title}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
-            </Link>
-          ))}
+            );
+          })}
         </div>
       </div>
 

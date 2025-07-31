@@ -27,25 +27,28 @@ const Status: React.FC = () => {
   };
 
   return (
-    <div className="fixed top-6 right-6 z-[100]">
-      <div className="flex items-center gap-2 bg-white shadow-lg rounded-full px-4 py-2 border border-gray-200">
-        {isOnline ? (
-          <span className="flex items-center text-green-600"><WifiIcon size={18} className="mr-1" />Online</span>
+    <div className="fixed top-[72px] right-6 z-[100] flex flex-col items-end">
+      <button
+        onClick={handleSync}
+        disabled={!isOnline || isSyncing}
+        className={`min-w-[80px] h-10 flex items-center justify-center gap-2 rounded-full shadow-lg border border-gray-200 bg-white hover:bg-gray-100 hover:scale-110 hover:shadow-xl transition-all duration-200 focus:outline-none px-3 py-2 ${isOnline ? 'text-green-600' : 'text-red-500'} disabled:opacity-50`}
+        title={`${isOnline ? 'Online' : 'Offline'}${lastSync ? `\nLast sync: ${lastSync.toLocaleTimeString()}` : ''}${isSyncing ? '\nSyncing...' : ''}`}
+        style={{ cursor: isOnline && !isSyncing ? 'pointer' : 'not-allowed' }}
+      >
+        {isSyncing ? (
+          <RefreshCwIcon className="animate-spin" size={20} />
+        ) : isOnline ? (
+          <WifiIcon size={20} />
         ) : (
-          <span className="flex items-center text-red-500"><WifiOffIcon size={18} className="mr-1" />Offline</span>
+          <WifiOffIcon size={20} />
         )}
-        <button
-          onClick={handleSync}
-          disabled={!isOnline || isSyncing}
-          className={`ml-2 flex items-center px-2 py-1 rounded text-xs font-medium border ${isSyncing ? 'bg-gray-100 text-gray-400' : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'} disabled:opacity-50`}
-        >
-          {isSyncing ? <RefreshCwIcon className="animate-spin mr-1" size={16} /> : <RefreshCwIcon className="mr-1" size={16} />}
-          {isSyncing ? 'Syncing...' : 'Sync Now'}
-        </button>
-        {lastSync && (
-          <span className="ml-2 text-xs text-gray-500">Last sync: {lastSync.toLocaleTimeString()}</span>
-        )}
-      </div>
+        <span className="text-xs font-semibold select-none">{isOnline ? 'Online' : 'Offline'}</span>
+      </button>
+      {!isOnline && (
+        <div className="mt-2 bg-yellow-100 border border-yellow-300 text-yellow-800 text-xs rounded px-3 py-2 shadow w-64">
+          <strong>Offline:</strong> Your details will be saved locally. Changes will sync automatically when you are back online.
+        </div>
+      )}
     </div>
   );
 };
