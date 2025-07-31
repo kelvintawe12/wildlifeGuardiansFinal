@@ -141,7 +141,6 @@ const Profile = () => {
           <div className="mb-4 md:mb-0 md:mr-6">
             <div className="relative">
               <img src={user?.avatar_url || 'https://via.placeholder.com/150'} alt={user?.name} className="w-24 h-24 rounded-full object-cover border-4 border-green-100" />
-              <img src={user?.avatar_url || 'https://via.placeholder.com/150'} alt={user?.name} className="w-24 h-24 rounded-full object-cover border-4 border-green-100" />
               <div className="absolute bottom-0 right-0 bg-green-500 p-1 rounded-full border-2 border-white">
                 <UserIcon size={14} className="text-white" />
               </div>
