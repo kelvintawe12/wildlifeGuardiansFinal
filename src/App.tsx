@@ -52,6 +52,14 @@ export function App() {
       });
     }
     // Set up online/offline listeners (handlers removed since state is not used)
+    const handleOnline = () => {
+      console.log('You are online');
+    };
+    const handleOffline = () => {
+      console.log('You are offline');
+    };
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
     return () => {
       // No cleanup needed since no listeners are added
     };
