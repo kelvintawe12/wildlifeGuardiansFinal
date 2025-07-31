@@ -168,17 +168,16 @@ export async function getUserActivity(userId: string): Promise<any[]> {
 }
 export async function getUserBadges(userId: string): Promise<any[]> {
   try {
-    // Mock data for development
-    return [{
-      id: '1',
-      awarded_at: new Date().toISOString(),
-      badges: {
-        id: '1',
-        name: 'Gorilla Expert',
-        description: 'Completed the Mountain Gorilla Quiz with a perfect score',
-        image_url: 'https://images.unsplash.com/photo-1564760055775-d63b17a55c44?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80'
-      }
-    }];
+    const { data, error } = await supabase
+      .from('user_badges')
+      .select('*, badges(*)')
+      .eq('user_id', userId)
+      .order('awarded_at', { ascending: false });
+    if (error) {
+      console.error(`Error fetching badges for user with ID ${userId}:`, error);
+      throw error;
+    }
+    return data || [];
   } catch (err) {
     console.error(`Error fetching badges for user with ID ${userId}:`, err);
     throw err;
@@ -186,17 +185,16 @@ export async function getUserBadges(userId: string): Promise<any[]> {
 }
 export async function getUserQuizResults(userId: string): Promise<any[]> {
   try {
-    // Mock data for development
-    return [{
-      id: '1',
-      score: 5,
-      max_score: 5,
-      completed_at: new Date().toISOString(),
-      quizzes: {
-        id: '1',
-        title: 'Mountain Gorilla Quiz'
-      }
-    }];
+    const { data, error } = await supabase
+      .from('user_quizzes')
+      .select('*, quizzes(*)')
+      .eq('user_id', userId)
+      .order('completed_at', { ascending: false });
+    if (error) {
+      console.error(`Error fetching quiz results for user with ID ${userId}:`, error);
+      throw error;
+    }
+    return data || [];
   } catch (err) {
     console.error(`Error fetching quiz results for user with ID ${userId}:`, err);
     throw err;

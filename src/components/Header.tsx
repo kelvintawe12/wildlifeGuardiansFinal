@@ -24,7 +24,7 @@ const Header = ({
             <MenuIcon size={24} />
           </button>
           <Link to="/dashboard" className="flex items-center">
-            <img src="/wildlife-guardians-logo.svg" alt="Wildlife Guardians logo" className="w-10 h-10 rounded-full mr-2" />
+            <img src="/wildlife-guardians-logo.svg" alt="Wildlife Guardians logo" className="w-16 h-16 rounded-full mr-3" />
             <h1 className="text-xl font-bold hidden sm:block">
               Wildlife Guardians
             </h1>

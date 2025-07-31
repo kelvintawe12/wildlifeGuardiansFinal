@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CheckCircleIcon, XCircleIcon, ChevronRightIcon, ClockIcon, AlertCircleIcon } from 'lucide-react';
 import { getAllQuizzes, getQuizById } from '../backend/api/quizzes';
+import { supabase } from '../backend/config/supabase';
 
 const Quiz = () => {
   const [currentQuiz, setCurrentQuiz] = useState<any | null>(null);
@@ -62,7 +63,36 @@ const Quiz = () => {
       setScore(score + 1);
     }
   };
-  const handleNextQuestion = () => {
+  // Save quiz result and award badge if needed
+  const saveQuizResultAndAwardBadge = async () => {
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      const userId = currentUser ? JSON.parse(currentUser).id : null;
+      if (!userId || !currentQuiz) return;
+      // Save quiz result
+      await supabase.from('user_quizzes').insert({
+        user_id: userId,
+        quiz_id: currentQuiz,
+        score,
+        max_score: quizQuestions.length,
+        completed_at: new Date().toISOString()
+      });
+      // Award badge if score >= half
+      if (score >= Math.ceil(quizQuestions.length / 2)) {
+        // Find badge for this quiz (assume badge id matches quiz id or use a mapping)
+        await supabase.from('user_badges').insert({
+          user_id: userId,
+          badge_id: currentQuiz,
+          awarded_at: new Date().toISOString()
+        });
+      }
+      // Optionally, trigger a refresh of sidebar/dashboard stats (could use a global state or event)
+    } catch (err) {
+      console.error('Error saving quiz result or awarding badge:', err);
+    }
+  };
+
+  const handleNextQuestion = async () => {
     if (!quizQuestions) return;
     const totalQuestions = quizQuestions.length;
     if (currentQuestion < totalQuestions - 1) {
@@ -71,6 +101,9 @@ const Quiz = () => {
       setIsAnswered(false);
     } else {
       setQuizCompleted(true);
+      await saveQuizResultAndAwardBadge();
+      // Notify sidebar/dashboard to refresh
+      window.dispatchEvent(new Event('userProgressUpdated'));
     }
   };
   const handleBackToQuizzes = () => {

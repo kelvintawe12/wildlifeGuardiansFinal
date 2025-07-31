@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { UserIcon, AwardIcon, BookOpenIcon, CalendarIcon, TrendingUpIcon, ClockIcon, MailIcon, KeyIcon, LogOutIcon } from 'lucide-react';
+import { getUserById, getUserBadges, getUserQuizResults } from '../backend/api/users';
+
 type User = {
   id: string;
   name: string;
   email: string;
   role: string;
-  joinDate: string;
-  avatarUrl?: string;
+  join_date: string;
+  avatar_url?: string;
 };
 type Badge = {
   id: string;
   name: string;
   description: string;
-  imageUrl: string;
-  awardedAt: string;
+  image_url?: string;
+  awarded_at?: string;
+  badges?: any;
 };
 type QuizResult = {
   id: string;
-  quizTitle: string;
   score: number;
-  maxScore: number;
-  completedAt: string;
+  max_score: number;
+  completed_at: string;
+  quizzes?: any;
 };
 const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -39,69 +42,37 @@ const Profile = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   useEffect(() => {
-    // In a real app, these would be API calls
     const fetchUserData = async () => {
       setIsLoading(true);
       try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        // Mock user data
-        const userData: User = {
-          id: '1',
-          name: 'Student Explorer',
-          email: 'student@example.com',
-          role: 'student',
-          joinDate: '2023-01-15',
-          avatarUrl: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80'
-        };
-        setUser(userData);
-        setFormData({
-          ...formData,
-          name: userData.name,
-          email: userData.email
-        });
-        // Mock badges data
-        const badgesData: Badge[] = [{
-          id: '1',
-          name: 'Gorilla Expert',
-          description: 'Completed the Mountain Gorilla Quiz with a perfect score',
-          imageUrl: 'https://images.unsplash.com/photo-1564760055775-d63b17a55c44?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80',
-          awardedAt: '2023-09-15'
-        }, {
-          id: '2',
-          name: 'Conservation Champion',
-          description: 'Completed 5 wildlife quizzes',
-          imageUrl: 'https://images.unsplash.com/photo-1531909390160-b9da8dd454c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80',
-          awardedAt: '2023-08-22'
-        }, {
-          id: '3',
-          name: '7-Day Streak',
-          description: 'Logged in for 7 consecutive days',
-          imageUrl: 'https://images.unsplash.com/photo-1526891993611-eca1e7d7b582?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80',
-          awardedAt: '2023-10-01'
-        }];
-        setBadges(badgesData);
-        // Mock quiz results data
-        const quizResultsData: QuizResult[] = [{
-          id: '1',
-          quizTitle: 'Mountain Gorilla Quiz',
-          score: 5,
-          maxScore: 5,
-          completedAt: '2023-09-15T14:30:00Z'
-        }, {
-          id: '2',
-          quizTitle: 'Black Rhino Quiz',
-          score: 4,
-          maxScore: 5,
-          completedAt: '2023-09-10T09:15:00Z'
-        }, {
-          id: '3',
-          quizTitle: 'African Elephant Quiz',
-          score: 3,
-          maxScore: 5,
-          completedAt: '2023-08-28T16:45:00Z'
-        }];
-        setQuizResults(quizResultsData);
+        const currentUser = localStorage.getItem('currentUser');
+        const userId = currentUser ? JSON.parse(currentUser).id : null;
+        if (!userId) throw new Error('No user logged in');
+        const userData = await getUserById(userId);
+        if (userData) {
+          setUser(userData);
+          setFormData(f => ({ ...f, name: userData.name, email: userData.email }));
+        }
+        // Get badges and quiz results
+        const badgesData = await getUserBadges(userId);
+        setBadges(badgesData.map(b => {
+          const badge = b.badges || b.badge || b;
+          return {
+            id: badge.id,
+            name: badge.name,
+            description: badge.description,
+            image_url: badge.image_url,
+            awarded_at: b.awarded_at || b.earned_at || badge.awarded_at || badge.earned_at
+          };
+        }));
+        const quizResultsData = await getUserQuizResults(userId);
+        setQuizResults(quizResultsData.map(q => ({
+          id: q.id,
+          quizzes: q.quizzes,
+          score: q.score,
+          max_score: q.max_score,
+          completed_at: q.completed_at
+        })));
       } catch (err) {
         console.error('Error fetching user data:', err);
         setError('Failed to load your profile data. Please try again.');
@@ -169,7 +140,8 @@ const Profile = () => {
         <div className="flex flex-col md:flex-row items-center md:items-start">
           <div className="mb-4 md:mb-0 md:mr-6">
             <div className="relative">
-              <img src={user?.avatarUrl || 'https://via.placeholder.com/150'} alt={user?.name} className="w-24 h-24 rounded-full object-cover border-4 border-green-100" />
+              <img src={user?.avatar_url || 'https://via.placeholder.com/150'} alt={user?.name} className="w-24 h-24 rounded-full object-cover border-4 border-green-100" />
+              <img src={user?.avatar_url || 'https://via.placeholder.com/150'} alt={user?.name} className="w-24 h-24 rounded-full object-cover border-4 border-green-100" />
               <div className="absolute bottom-0 right-0 bg-green-500 p-1 rounded-full border-2 border-white">
                 <UserIcon size={14} className="text-white" />
               </div>
@@ -183,11 +155,12 @@ const Profile = () => {
             </p>
             <div className="mt-2 flex flex-wrap items-center justify-center md:justify-start gap-2">
               <span className="bg-green-100 text-green-800 text-xs px-2.5 py-1 rounded-full">
-                {user?.role.charAt(0).toUpperCase() + user?.role.slice(1)}
+                {(user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : '')}
               </span>
               <span className="flex items-center text-xs text-gray-500">
                 <CalendarIcon size={14} className="mr-1" />
-                Joined {new Date(user?.joinDate || '').toLocaleDateString()}
+                Joined {new Date(user?.join_date || '').toLocaleDateString()}
+                Joined {new Date(user?.join_date || '').toLocaleDateString()}
               </span>
             </div>
           </div>
@@ -289,7 +262,7 @@ const Profile = () => {
             </div>
             <div>
               <h3 className="text-lg font-bold text-gray-800">
-                {quizResults.length > 0 ? Math.round(quizResults.reduce((acc, quiz) => acc + quiz.score / quiz.maxScore, 0) / quizResults.length * 100) : 0}
+                {quizResults.length > 0 ? Math.round(quizResults.reduce((acc, quiz) => acc + quiz.score / quiz.max_score, 0) / quizResults.length * 100) : 0}
                 %
               </h3>
               <p className="text-sm text-gray-500">Average Score</p>
@@ -326,7 +299,8 @@ const Profile = () => {
                 </div> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {badges.map(badge => <div key={badge.id} className="bg-gray-50 rounded-lg p-4 border border-gray-100">
                       <div className="flex items-start">
-                        <img src={badge.imageUrl} alt={badge.name} className="w-16 h-16 rounded-lg object-cover mr-4" />
+                        <img src={badge.image_url} alt={badge.name} className="w-16 h-16 rounded-lg object-cover mr-4" />
+                        <img src={badge.image_url} alt={badge.name} className="w-16 h-16 rounded-lg object-cover mr-4" />
                         <div>
                           <h3 className="font-bold text-gray-800">
                             {badge.name}
@@ -337,7 +311,9 @@ const Profile = () => {
                           <div className="flex items-center mt-2 text-xs text-gray-500">
                             <CalendarIcon size={12} className="mr-1" />
                             Earned on{' '}
-                            {new Date(badge.awardedAt).toLocaleDateString()}
+                            {badge.awarded_at ? new Date(badge.awarded_at).toLocaleDateString() : ''}
+                            {badge.awarded_at ? new Date(badge.awarded_at).toLocaleDateString() : ''}
+                {quizResults.length > 0 ? Math.round(quizResults.reduce((acc, quiz) => acc + quiz.score / quiz.max_score, 0) / quizResults.length * 100) : 0}
                           </div>
                         </div>
                       </div>
@@ -372,17 +348,17 @@ const Profile = () => {
                       {quizResults.map(result => <tr key={result.id}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm font-medium text-gray-900">
-                              {result.quizTitle}
+                              {result.quizzes?.title || ''}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              <span className={`text-sm font-medium ${result.score / result.maxScore >= 0.7 ? 'text-green-700' : result.score / result.maxScore >= 0.4 ? 'text-yellow-700' : 'text-red-700'}`}>
-                                {result.score}/{result.maxScore}
+                              <span className={`text-sm font-medium ${result.score / result.max_score >= 0.7 ? 'text-green-700' : result.score / result.max_score >= 0.4 ? 'text-yellow-700' : 'text-red-700'}`}>
+                                {result.score}/{result.max_score}
                               </span>
                               <span className="ml-2 text-xs text-gray-500">
                                 (
-                                {Math.round(result.score / result.maxScore * 100)}
+                                {Math.round(result.score / result.max_score * 100)}
                                 %)
                               </span>
                             </div>
@@ -390,9 +366,9 @@ const Profile = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center text-sm text-gray-500">
                               <ClockIcon size={14} className="mr-1" />
-                              {new Date(result.completedAt).toLocaleDateString()}{' '}
+                              {new Date(result.completed_at).toLocaleDateString()}{' '}
                               at{' '}
-                              {new Date(result.completedAt).toLocaleTimeString([], {
+                              {new Date(result.completed_at).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit'
                       })}

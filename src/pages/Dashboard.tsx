@@ -7,34 +7,13 @@ import { getAllAnimals } from '../backend/api/animals';
 import { getAllQuizzes } from '../backend/api/quizzes';
 import { getAllBadges } from '../backend/api/badges';
 
-type Animal = {
-  id: string;
-  name: string;
-  status: string;
-  image_url?: string;
-};
-
-type UserStats = {
-  quizzesCompleted: number;
-  badgesEarned: number;
-  averageScore: number;
-  streak: number;
-};
-
-
-const Dashboard = () => {
-  const [userStats, setUserStats] = useState<UserStats>({
-    quizzesCompleted: 0,
-    badgesEarned: 0,
-    averageScore: 0,
-    streak: 0
-  });
+function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
-  const [allQuizzes, setAllQuizzes] = useState<any[]>([]);
-  const [quizResults, setQuizResults] = useState<any[]>([]);
+  const [allQuizzes, setAllQuizzes] = useState<Quiz[]>([]);
+  const [quizResults, setQuizResults] = useState<QuizResult[]>([]);
   const [allAnimals, setAllAnimals] = useState<Animal[]>([]);
-  // Removed unused badges state
-  const [earnedBadges, setEarnedBadges] = useState<any[]>([]);
+  const [earnedBadges, setEarnedBadges] = useState<Badge[]>([]);
+  const [userStats, setUserStats] = useState({ quizzesCompleted: 0, badgesEarned: 0, averageScore: 0, streak: 0 });
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -57,7 +36,6 @@ const Dashboard = () => {
           // Fetch earned badges
           const earned = await getUserBadges(userId);
           setEarnedBadges(earned);
-
           // Stats
           const quizzesCompleted = quizResultsData.length;
           const badgesEarned = earned.length;
@@ -77,7 +55,40 @@ const Dashboard = () => {
       }
     };
     fetchDashboardData();
+    // Listen for userProgressUpdated event
+    const handleUserProgressUpdated = () => fetchDashboardData();
+    window.addEventListener('userProgressUpdated', handleUserProgressUpdated);
+    return () => {
+      window.removeEventListener('userProgressUpdated', handleUserProgressUpdated);
+    };
   }, []);
+
+type Quiz = {
+  id: string;
+  title: string;
+  difficulty: string;
+  animal_id?: string;
+};
+type Animal = {
+  id: string;
+  name: string;
+  image_url?: string;
+  status: string;
+};
+type Badge = {
+  id: string;
+  name: string;
+  description: string;
+  image_url: string;
+  badges?: any;
+};
+type QuizResult = {
+  id: string;
+  quiz_id: string;
+  score: number;
+  max_score: number;
+  completed_at?: string;
+};
 
   if (isLoading) {
     return (
@@ -86,7 +97,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
 
   return (
     <div className="space-y-8">

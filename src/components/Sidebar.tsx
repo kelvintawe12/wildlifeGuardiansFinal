@@ -56,6 +56,12 @@ const Sidebar = ({
       }
     };
     fetchUserProgress();
+    // Listen for userProgressUpdated event
+    const handleUserProgressUpdated = () => fetchUserProgress();
+    window.addEventListener('userProgressUpdated', handleUserProgressUpdated);
+    return () => {
+      window.removeEventListener('userProgressUpdated', handleUserProgressUpdated);
+    };
   }, []);
   const navItems = [{
     name: 'Dashboard',
