@@ -1,5 +1,14 @@
 # Wildlife Guardians
 
+A wildlife education platform for students, teachers, and admins.
+
+## Screenshots
+<p align="center">
+  <img src="public/images/screenshot-dashboard.png" alt="Dashboard Screenshot" width="800" />
+
+  <img src="public/images/screenshot-quiz-list.png" alt="Quiz List Screenshot" width="400" style="margin-top: 2rem;" />
+</p>
+
 A full-stack wildlife education platform built with React, TypeScript, Vite, TailwindCSS, and Supabase.
 
 ## Features
@@ -18,19 +27,28 @@ A full-stack wildlife education platform built with React, TypeScript, Vite, Tai
 ## Project Structure
 ```
 ├── public/                # Static assets, icons, manifest, service worker
-├── src/
+│   ├── images/            # App screenshots, animal images
+│   ├── icons/             # SVG icons
+│   ├── ...                # App icons, manifest, sw.js
+├── src/                   # All source code
 │   ├── backend/           # API logic, Supabase config, migrations
 │   ├── components/        # Reusable UI components
 │   ├── pages/             # Route-based pages (Dashboard, Quiz, Admin, etc.)
 │   ├── utils/             # Utility functions (offline sync, storage)
 │   ├── App.tsx            # Main app entry
 │   └── index.tsx          # React root
-├── index.html
-├── package.json
-├── tailwind.config.js
-├── tsconfig.json
-├── vite.config.ts
-└── README.md
+├── index.html             # Main HTML entry
+├── package.json           # Project metadata and scripts
+├── package-lock.json      # NPM lockfile
+├── tailwind.config.js     # TailwindCSS config
+├── tsconfig.json          # TypeScript config
+├── tsconfig.node.json     # Node-specific TS config
+├── vite.config.ts         # Vite build config
+├── .eslintrc.cjs          # ESLint config
+├── .gitignore             # Git ignore rules
+├── vercel.json            # Vercel deployment config
+├── SETUP.md               # Setup and environment notes
+└── README.md              # Project documentation
 ```
 
 ## Setup & Installation
