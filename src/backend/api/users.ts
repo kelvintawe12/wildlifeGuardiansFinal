@@ -186,7 +186,7 @@ export async function getUserBadges(userId: string): Promise<any[]> {
 export async function getUserQuizResults(userId: string): Promise<any[]> {
   try {
     const { data, error } = await supabase
-      .from('user_quizzes')
+      .from('quiz_results_final')
       .select('*, quizzes(*)')
       .eq('user_id', userId)
       .order('completed_at', { ascending: false });

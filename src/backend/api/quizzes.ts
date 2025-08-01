@@ -1,3 +1,23 @@
+// Helper for seeding: create quiz and questions in one call
+export async function createQuizWithQuestions(quizWithQuestions: {
+  title: string;
+  description: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  published: boolean;
+  animal_id?: string;
+  questions: Array<{
+    question_text: string;
+    options: string[];
+    correct_answer: string;
+    explanation?: string;
+    order_num: number;
+  }>;
+}): Promise<any> {
+  const { questions, ...quiz } = quizWithQuestions;
+  // Remove undefined animal_id
+  if (!quiz.animal_id) delete quiz.animal_id;
+  return createQuiz(quiz as QuizInput, questions as QuestionInput[]);
+}
 import { supabase } from '../config/supabase';
 export type Quiz = {
   id: string;

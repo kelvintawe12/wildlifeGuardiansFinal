@@ -4,11 +4,49 @@ import { getAllQuizzes, getQuizById } from '../backend/api/quizzes';
 import { supabase } from '../backend/config/supabase';
 
 const Quiz = () => {
+  const [resultSaved, setResultSaved] = useState(false);
   const [currentQuiz, setCurrentQuiz] = useState<any | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
+
+  // Save quiz result to quiz_results table and localStorage
+  const saveQuizResult = async () => {
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      const userId = currentUser ? JSON.parse(currentUser).id : null;
+      if (!userId || !currentQuiz) return;
+      // Save to quiz_results_final table
+      const quizResultPayload = {
+        user_id: userId,
+        quiz_id: currentQuiz,
+        score: score,
+        max_score: quizQuestions.length,
+        completed_at: new Date().toISOString()
+      };
+      console.log('Inserting quiz result:', quizResultPayload);
+      const { error } = await supabase.from('quiz_results_final').insert(quizResultPayload);
+      if (error) {
+        console.error('Error inserting quiz result:', error);
+        throw error;
+      }
+      // Save to localStorage
+      const localResults = JSON.parse(localStorage.getItem('quizResults') || '[]');
+      localResults.push({
+        user_id: userId,
+        quiz_id: currentQuiz,
+        score: score,
+        max_score: quizQuestions.length,
+        completed_at: new Date().toISOString()
+      });
+      localStorage.setItem('quizResults', JSON.stringify(localResults));
+      setResultSaved(true);
+    } catch (err) {
+      alert('Failed to save quiz result. Please try again.');
+    }
+  };
+  // ...rest of Quiz component code...
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [availableQuizzes, setAvailableQuizzes] = useState<any[]>([]);
   const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
@@ -70,7 +108,7 @@ const Quiz = () => {
       const userId = currentUser ? JSON.parse(currentUser).id : null;
       if (!userId || !currentQuiz) return;
       // Save quiz result
-      await supabase.from('user_quizzes').insert({
+      await supabase.from('quiz_results_final').insert({
         user_id: userId,
         quiz_id: currentQuiz,
         score,
@@ -80,11 +118,11 @@ const Quiz = () => {
       // Award badge if score >= half
       if (score >= Math.ceil(quizQuestions.length / 2)) {
         // Find badge for this quiz (assume badge id matches quiz id or use a mapping)
-        await supabase.from('user_badges').insert({
+        await supabase.from('user_badges').upsert({
           user_id: userId,
           badge_id: currentQuiz,
           awarded_at: new Date().toISOString()
-        });
+        }, { onConflict: 'user_id,badge_id', ignoreDuplicates: true });
       }
       // Optionally, trigger a refresh of sidebar/dashboard stats (could use a global state or event)
     } catch (err) {
@@ -260,6 +298,15 @@ const Quiz = () => {
             })}
             </div>
           </div>
+          {/* Save Results Button */}
+          {!resultSaved && (
+            <button onClick={saveQuizResult} className="mb-6 bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition-colors font-medium">
+              Save Results
+            </button>
+          )}
+          {resultSaved && (
+            <div className="mb-6 text-green-700 font-medium">Results saved!</div>
+          )}
           {percentage >= 60 && <div className="mb-8">
               <div className="relative w-24 h-24 mx-auto mb-3">
                 <img src={quiz?.image || 'https://images.unsplash.com/photo-1531909390160-b9da8dd454c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80'} alt="Badge" className="w-24 h-24 rounded-full object-cover border-4 border-green-100" />

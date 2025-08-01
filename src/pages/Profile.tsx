@@ -66,13 +66,37 @@ const Profile = () => {
           };
         }));
         const quizResultsData = await getUserQuizResults(userId);
-        setQuizResults(quizResultsData.map(q => ({
+        // Load local results and merge with backend results, avoiding duplicates
+        let localResults = [];
+        try {
+          localResults = JSON.parse(localStorage.getItem('quizResults') || '[]');
+        } catch {}
+        // Only include local results for this user
+        localResults = localResults.filter((r: any) => r.user_id === userId);
+        // Map backend results (ensure quiz_id is present)
+        const backendResults = quizResultsData.map(q => ({
           id: q.id,
+          quiz_id: q.quiz_id || (q.quizzes && q.quizzes.id) || '',
           quizzes: q.quizzes,
           score: q.score,
           max_score: q.max_score,
           completed_at: q.completed_at
-        })));
+        }));
+        // Merge, avoiding duplicates (by quiz_id and completed_at)
+        const allResults = [...backendResults];
+        localResults.forEach((local: any) => {
+          if (!allResults.some(r => r.quiz_id === local.quiz_id && r.completed_at === local.completed_at)) {
+            allResults.push({
+              id: local.id || local.quiz_id + '_' + local.completed_at,
+              quiz_id: local.quiz_id,
+              quizzes: { title: '' },
+              score: local.score,
+              max_score: local.max_score,
+              completed_at: local.completed_at
+            });
+          }
+        });
+        setQuizResults(allResults);
       } catch (err) {
         console.error('Error fetching user data:', err);
         setError('Failed to load your profile data. Please try again.');
